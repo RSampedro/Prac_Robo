@@ -246,10 +246,16 @@ function TT = get_homogeneous_transforms(DH)
    
     TT.T01 = tmat(DH(1, 1), DH(1, 2), DH(1, 3), DH(1, 4));
     TT.T12 = tmat(DH(2, 1), DH(2, 2), DH(2, 3), DH(2, 4));
+    TT.T02 = TT.T01*TT.T12;
     TT.T23 = tmat(DH(3, 1), DH(3, 2), DH(3, 3), DH(3, 4));
+    TT.T03 = TT.T02*TT.T23;
     TT.T34 = tmat(DH(4, 1), DH(4, 2), DH(4, 3), DH(4, 4));
+    TT.T04 = TT.T03*TT.T34;
     TT.T45 = tmat(DH(5, 1), DH(5, 2), DH(5, 3), DH(5, 4));
+    TT.T05 = TT.T04*TT.T45;
     TT.T56 = tmat(DH(6, 1), DH(6, 2), DH(6 ,3), DH(6, 4));
+    TT.T06 = TT.T05*TT.T56;
+    
 end
     
  
