@@ -103,31 +103,25 @@ function sessio2
     pos_y = linspace(P_init(2),P_target(2),frames);
     pos_z = linspace(P_init(3),P_target(3),frames);
     pos = [pos_x; pos_y; pos_z];
-
-
+    
+    DH = [      0     0     0   theta_init(1)   % i=1
+              -90     0     0   theta_init(2)   % i=2
+                0   650   190   theta_init(3)   % i=3
+              -90     0   600   theta_init(4)   % i=4
+               90     0     0   theta_init(5)   % i=5
+              -90     0     0   theta_init(6)   % i=6
+              ];
 
     hold off;
     colors = ['r' 'g' 'b' 'c' 'm' 'y'];
 
     hold on;
     thetas = zeros(6,frames);
-
+    clf;
     for i=1:frames
         [theta_target] = inverse_kinematics(DH, pos(:,i));
         thetas(:,i) = theta_target;
-
-        DH = [DH(:,1:3) theta_target];
-        TT = get_homogeneous_transforms(DH);
-        clf;
-        plot_canvas;
-        plot_joints(TT);
-        simulate_links(TT); 
-        pause(0.3);
     end
-
-    hold off;
-    pause;
-
 
     hold on;
     grid on;
@@ -137,13 +131,13 @@ function sessio2
     t(4) = plot(thetas(4, :), colors(4));
     t(5) = plot(thetas(5, :), colors(5));
     t(6) = plot(thetas(6, :), colors(6));
+    title('9_1: Interpolació Lineal');
     hold off;
     pause;
 
 
     %Interpolació spline
 
-    frames = 20;
 
     pos_x = linspace(P_init(1),P_target(1),frames);
     pos_y = interp1([P_init(1) pos_x(uint8(frames/2)) P_target(1)],[P_init(2) pos_y(uint8(frames/2))+norm(pos_y(uint8(frames/2))-P_init(2)) P_target(2)],pos_x,'spline');
@@ -153,23 +147,14 @@ function sessio2
     for i=1:frames
             [theta_target] = inverse_kinematics(DH, pos2(:,i));
             thetas(:,i) = theta_target;
-
-            DH = [DH(:,1:3) theta_target];
-            TT = get_homogeneous_transforms(DH);
-            clf;
-            plot_canvas;
-            plot_joints(TT);
-            simulate_links(TT); 
-            pause(0.3);
     end
 
 
     hold off;
-    pause;
 
     % Plot de las variaciones de theta
     t = zeros(6,1);
-
+    clf;
     hold on;
     grid on;
     t(1) = plot(thetas(1, :), colors(1));
@@ -178,7 +163,7 @@ function sessio2
     t(4) = plot(thetas(4, :), colors(4));
     t(5) = plot(thetas(5, :), colors(5));
     t(6) = plot(thetas(6, :), colors(6));
-
+    title('9_1: Interpolació Spline');
     hold off;
     pause;
 
@@ -188,7 +173,12 @@ function sessio2
     % P_init = [500 500 500]? to P_target = [-400 300 -100]' by using the 
     % incremental motion through the Jacobian.
     %--------------------------------------------------------------------------
-
+    
+    [theta_init]= inverse_kinematics(DH,P_init);
+    DH = [DH(:,1:3) theta_init];
+    TT = get_homogeneous_transforms(DH);
+    TT = get_3Dpositions(TT);
+    
     J = get_jacobian(TT)  
     
     P_target= [-400 300 -100]';
@@ -201,8 +191,7 @@ function sessio2
     increments = (pos(:,2) - pos(:,1))*aux;
     increments = [increments;0;0;0];
 
-    [theta_init]= inverse_kinematics(DH,P_init);
-    DH = [DH(:,1:3) theta_init];
+    
     
 
 
@@ -212,9 +201,11 @@ function sessio2
     while difference > error
         
         TT = get_homogeneous_transforms(DH);
+        TT = get_3Dpositions(TT);
         clf;
         plot_canvas;
         plot_joints(TT);
+        simulate_links(TT)
         
         %difference = sqrt((P_target(1)-TT.T06(1,4))^2+(P_target(2)-TT.T06(2,4))^2+(P_target(3)-TT.T06(3,4))^2)
         difference = (norm(P_target - TT.T06(1:3,4)))
