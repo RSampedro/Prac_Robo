@@ -27,10 +27,10 @@ function sessio2
     % (?)
     global P_target;
     
-    P_target = [-400 300 -100];
+    P_target = [-400 300 -200];
     theta_init = [90, -90, -90, 0, 0, 0];
 
-    theta_init = pas_radians(theta_init);
+    %theta_init = pas_radians(theta_init);
 
     DH = [      0     0     0   theta_init(1)   % i=1
               -90     0     0   theta_init(2)   % i=2
@@ -57,10 +57,13 @@ function sessio2
 
     POS_comp = get_3Dpositions(TT_comp);
 
-    P_comp = [POS_comp.H06(1, 4) POS_comp.H06(2, 4) POS_comp.H06(3, 4)];
+    P_comp = [POS_comp.T06(1, 4) POS_comp.T06(2, 4) POS_comp.T06(3, 4)];
 
     disp(P_target);
     disp(P_comp);
+    pause;
+    
+    
 
         % (?)
 
@@ -80,7 +83,7 @@ function sessio2
     %--------------------------------------------------------------------------
 
     P_init = [500 500 500];
-    P_target = [-400 300 -100];
+    P_target = [-400 300 -200];
 
     frames = 20;
 
@@ -113,7 +116,8 @@ function sessio2
         TT = get_homogeneous_transforms(DH);
         clf;
         plot_canvas;
-        plot3(pos(1, i), pos(2, i), pos(3, i), '*');
+        plot_joints(TT);
+        simulate_links(TT);
         pause(0.3);
     end
 
@@ -516,14 +520,14 @@ end
 % AUXILIARY FUNCTIONS  %
 %======================%
 
-function POS = get_3Dpositions(TT)
+function TT = get_3Dpositions(TT)
 
-    POS.H01 = TT.T01;
-    POS.H02 = POS.H01*TT.T12;
-    POS.H03 = POS.H02*TT.T23;
-    POS.H04 = POS.H03*TT.T34;
-    POS.H05 = POS.H04*TT.T45;
-    POS.H06 = POS.H05*TT.T56;
+    TT.T01 = TT.T01;
+    TT.T02 = TT.T01*TT.T12;
+    TT.T03 = TT.T02*TT.T23;
+    TT.T04 = TT.T03*TT.T34;
+    TT.T05 = TT.T04*TT.T45;
+    TT.T06 = TT.T05*TT.T56;
     
 end
 
@@ -567,17 +571,13 @@ function TT = get_homogeneous_transforms(DH)
     %  HINT: TT may be a structure containing all the T's.             %
     %------------------------------------------------------------------%
    
-    TT.T01 = tmat(DH(1, 1), DH(1, 2), DH(1, 3), DH(1, 4));
-    TT.T12 = tmat(DH(2, 1), DH(2, 2), DH(2, 3), DH(2, 4));
-    TT.T02=TT.T01*TT.T12;
-    TT.T23 = tmat(DH(3, 1), DH(3, 2), DH(3, 3), DH(3, 4));
-    TT.T03=TT.T02*TT.T23;
-    TT.T34 = tmat(DH(4, 1), DH(4, 2), DH(4, 3), DH(4, 4));
-    TT.T04=TT.T03*TT.T34;
-    TT.T45 = tmat(DH(5, 1), DH(5, 2), DH(5, 3), DH(5, 4));
-    TT.T05=TT.T04*TT.T45;
-    TT.T56 = tmat(DH(6, 1), DH(6, 2), DH(6 ,3), DH(6, 4));
-    TT.T06=TT.T05*TT.T56;
+    TT.T01 = tmat(DH(1,1), DH(1,2), DH(1,3), DH(1,4));
+    TT.T12 = tmat(DH(2,1), DH(2,2), DH(2,3), DH(2,4));
+    TT.T23 = tmat(DH(3,1), DH(3,2), DH(3,3), DH(3,4));
+    TT.T34 = tmat(DH(4,1), DH(4,2), DH(4,3), DH(4,4));
+    TT.T45 = tmat(DH(5,1), DH(5,2), DH(5,3), DH(5,4));
+    TT.T56 = tmat(DH(6,1), DH(6,2), DH(6,3), DH(6,4));
+    
 end
     
  
@@ -590,9 +590,9 @@ function T = tmat(alpha, a, d, theta)
     %         to Robotics".                                            %
     %------------------------------------------------------------------%
     
-    T = [cos(theta) -sin(theta) 0 a; 
-        sin(theta)*cos(alpha) cos(theta)*cos(alpha) -sin(alpha) -sin(alpha)*d ; 
-        sin(theta)*sin(alpha) cos(theta)*sin(alpha) cos(alpha) cos(alpha);
+    T = [cosd(theta) -sind(theta) 0 a; 
+        sind(theta)*cosd(alpha) cosd(theta)*cosd(alpha) -sind(alpha) -sind(alpha)*d ; 
+        sind(theta)*sind(alpha) cosd(theta)*sind(alpha) cosd(alpha) cosd(alpha)*d;
         0 0 0 1];
     
 end
@@ -604,32 +604,22 @@ function plot_joints(TT)
  
     %------------------------------------------------------------------%
     % TO DO: Plot the joints in the canvas.                            %   
-    % HINT 1: You can call 'plot_canvas' to rewrite the axes.          %
+    % HINT 1: You can call 'plot_canvas' to rewrite the axes.         %
     % HINT 2: Use the T's to obtain the 3D positions.                  %
     %------------------------------------------------------------------%
-    POS = get_3Dpositions(TT);
-    global P_target;
+    TT = get_3Dpositions(TT);
+    TT.T06
     plot_canvas;
     
-    points = [POS.H01(1, 4) POS.H01(2, 4) POS.H01(3, 4)
-              POS.H02(1, 4) POS.H02(2, 4) POS.H02(3, 4)
-              POS.H03(1, 4) POS.H03(2, 4) POS.H03(3, 4)
-              POS.H04(1, 4) POS.H04(2, 4) POS.H04(3, 4)
-              POS.H05(1, 4) POS.H05(2, 4) POS.H05(3, 4)];
-
-    plot3(points(:,1),points(:,2),points(:,3), '*');
-    plot3(POS.H06(1, 4), POS.H06(2, 4), POS.H06(3, 4), 'o');
-    plot3(P_target(1), P_target(2), P_target(3), 'o');
-    disp(points(1, :));
-    disp(points(2, :));
-    disp(points(3, :));
-    disp(points(4, :));
-    disp(points(5, :));
-    %disp(points(6, :));
-
-
-    grid on;
     hold on;
+    grid on;
+    plot3(TT.T01(1,4),TT.T01(2,4),TT.T01(3,4),'o')
+    plot3(TT.T02(1,4),TT.T02(2,4),TT.T02(3,4),'+')
+    plot3(TT.T03(1,4),TT.T03(2,4),TT.T03(3,4),'+')
+    plot3(TT.T04(1,4),TT.T04(2,4),TT.T04(3,4),'o')
+    plot3(TT.T05(1,4),TT.T05(2,4),TT.T05(3,4),'+')
+    plot3(TT.T06(1,4),TT.T06(2,4),TT.T06(3,4),'+')
+    hold off
 
 end
  
@@ -644,20 +634,18 @@ function simulate_links(TT)
     % HINT 2: You can simulate the links by connecting the each pair   % 
     %         of consecutive joints with a straight line.              %                           %
     %------------------------------------------------------------------%
-    POS = get_3Dpositions(TT);
+    TT = get_3Dpositions(TT);
     
-    points = [POS.H01(1, 4) POS.H01(2, 4) POS.H01(3, 4)
-              POS.H02(1, 4) POS.H02(2, 4) POS.H02(3, 4)
-              POS.H03(1, 4) POS.H03(2, 4) POS.H03(3, 4)
-              POS.H04(1, 4) POS.H04(2, 4) POS.H04(3, 4)
-              POS.H05(1, 4) POS.H05(2, 4) POS.H05(3, 4)
-              POS.H06(1, 4) POS.H06(2, 4) POS.H06(3, 4)];
+    hold on
+    grid on
+    plot3([TT.T01(1,4), TT.T02(1,4)],[TT.T01(2,4), TT.T02(2,4)],[TT.T01(3,4), TT.T02(3,4)])
+    plot3([TT.T02(1,4), TT.T03(1,4)],[TT.T02(2,4), TT.T03(2,4)],[TT.T02(3,4), TT.T03(3,4)])
+    plot3([TT.T03(1,4), TT.T04(1,4)],[TT.T03(2,4), TT.T04(2,4)],[TT.T03(3,4), TT.T04(3,4)])
+    plot3([TT.T04(1,4), TT.T05(1,4)],[TT.T04(2,4), TT.T05(2,4)],[TT.T04(3,4), TT.T05(3,4)])
+    plot3([TT.T05(1,4), TT.T06(1,4)],[TT.T05(2,4), TT.T06(2,4)],[TT.T05(3,4), TT.T06(3,4)])
+    
+    hold off
 
-    
-    plot3(points(:,1),points(:,2),points(:,3));
-    
-    grid on;
-    hold on;
     
 end
 

@@ -323,8 +323,16 @@ function result = display_joints_points(pos)
 
 end
     
+function TT = get_3Dpositions(TT)
+
+    TT.T01 = TT.T01;
+    TT.T02 = TT.T01*TT.T12;
+    TT.T03 = TT.T02*TT.T23;
+    TT.T04 = TT.T03*TT.T34;
+    TT.T05 = TT.T04*TT.T45;
+    TT.T06 = TT.T05*TT.T56;
     
-    
+end
     
 
 
