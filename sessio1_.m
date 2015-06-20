@@ -139,7 +139,7 @@ function sessio1
                  -90     0     0   thetaB(2)   % i=2
                    0   650   190   thetaB(3)   % i=3
                  -90     0   600   thetaB(4)   % i=4
-                  90     0    d1   thetaB(5)   % i=5
+                   0     0    d1   thetaB(5)   % i=5
                  -90     0     0   thetaB(6)   % i=6
           ];
            
@@ -152,13 +152,13 @@ function sessio1
       simulate_links(TT3);
       pause;
       
-      d1 = 300;
+      d2 = 300;
     
       DH4 = [      0     0     0   thetaB(1)   % i=1
                  -90     0     0   thetaB(2)   % i=2
                    0   650   190   thetaB(3)   % i=3
                  -90     0   600   thetaB(4)   % i=4
-                  90     0    d1   thetaB(5)   % i=5
+                   0     0    d2   thetaB(5)   % i=5
                  -90     0     0   thetaB(6)   % i=6
           ];
            
@@ -169,13 +169,13 @@ function sessio1
       simulate_links(TT4); 
       pause;
           
-      d3 = 100;
+      d3 = -300;
       
       DH5 = [     0     0     0   thetaB(1)   % i=1
                 -90     0     0   thetaB(2)   % i=2
                   0   650   190   thetaB(3)   % i=3
                 -90     0   600   thetaB(4)   % i=4
-                 90     0    d1   thetaB(5)   % i=5
+                  0     0    d3   thetaB(5)   % i=5
                 -90     0     0   thetaB(6)   % i=6
              ];
         
