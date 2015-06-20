@@ -43,7 +43,7 @@ function sessio2
           %theta_target = array de angles theta resultat del calcul de invers
           %kinematics
 
-    [theta_target] = inverse_kinematics(DH, P_target);
+    [theta_target] = inverse_kinematics(DH, P_target );
 
     DH_compr = [      0     0     0   theta_target(1)   % i=1
                     -90     0     0   theta_target(2)   % i=2
