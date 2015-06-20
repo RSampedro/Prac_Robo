@@ -1,15 +1,32 @@
+%////////////////////
+%    sessio2.m
+%////////////////////
+
+
+
 %================%
 % MAIN FUNCTION  %
 %================%
 
-function sessio1
-    
-   
+
+% ====================================== %
+% INICI CODI SESSIÓ 1                    %
+% ====================================== %
+
 %////////////////////
 %    sessio1.m
 %////////////////////
 
 
+
+%================%
+% MAIN FUNCTION  %
+%================%
+
+
+
+function sessio1
+    
     % We first close all the figures.
     close all;
  
@@ -20,7 +37,6 @@ function sessio1
     % Draw the axes, choose the intervals and set the view.  
     plot_canvas;
     
-    
  
  
 %==========================================================================
@@ -30,11 +46,9 @@ function sessio1
  
     % The initial configuration (configuration shown A)
     theta_init = [90, -90, -90, 0, 0, 0]';
+    
+    theta_init = pas_radians(theta_init);
  
-    
-    %todos son revolition joint --> en todos tenemos un angulo asociado
-    
-    %formato: [a , alpha, d, theta] para cada joint
     % The DH parameters of PUMA 560
     DH = [  0     0     0   theta_init(1)   % i=1
           -90     0     0   theta_init(2)   % i=2
@@ -49,18 +63,12 @@ function sessio1
    
  
 
-
-
-
-
-
-
 %==========================================================================
 % 3./ We plot the joints positions for the initial configuration:
 %--------------------------------------------------------------------------
     
     % Joints are visualized on the canvas.
-    plot_joints(TT);
+    %plot_joints(TT);
     
 
  
@@ -70,37 +78,49 @@ function sessio1
  
     % We connect the joints with straight lines to simulate the links.
     simulate_links(TT);    
-    title('4 : Show Robot (Conf 1)');
-    pause;  % a bit, to watch the plot of the configuration shown.
+    %pause;  % a bit, to watch the plot of the configuration shown.
  
+    
+    
 %==========================================================================
 % 5./ Repeate for a new configuration:
 %--------------------------------------------------------------------------
  
     % The new configuration (configuration shown B).
+
     thetaB = [45, -60, 30, 0, 0, 0]';
     
-    DH = [  0     0     0   thetaB(1)   % i=1
-          -90     0     0   thetaB(2)   % i=2
-            0   650   190   thetaB(3)   % i=3
-          -90     0   600   thetaB(4)   % i=4
-           90     0     0   thetaB(5)   % i=5
-          -90     0     0   thetaB(6)   % i=6
+    thetaB = pas_radians(thetaB);
+            
+    %------------------------------------------------------------------%
+    % TO DO: Write new call to the functions to implement the new conf.% 
+    %------------------------------------------------------------------%
+    
+    DH2 = [  0     0     0   thetaB(1)   % i=1
+           -90     0     0   thetaB(2)   % i=2
+             0   650   190   thetaB(3)   % i=3
+           -90     0   600   thetaB(4)   % i=4
+            90     0     0   thetaB(5)   % i=5
+           -90     0     0   thetaB(6)   % i=6
           ];
-        
-    TT = get_homogeneous_transforms(DH);
+         
+    % The homogeneous transforms TT from the DH parameters.
+    TT2 = get_homogeneous_transforms(DH2);
     
-    figure,         
+%==========================================================================
+% 5.3./ We plot the joints positions for the initial configuration:
+%--------------------------------------------------------------------------
     
-    plot_joints(TT);
+    % Joints are visualized on the canvas.
+    %plot_joints(TT2);
+    
+%==========================================================================
+% 5.4./ Simulate links as straight lines connecting joints:
+%--------------------------------------------------------------------------
  
     % We connect the joints with straight lines to simulate the links.
-    simulate_links(TT);    
-    
-    title('5 : Show Robot (Conf 2)');
-    
-    pause;  % a bit, to watch the plot of the configuration shown.
- 
+    simulate_links(TT2);    
+    %pause;  % a bit, to watch the plot of the configuration shown.
  
 %==========================================================================
 % 6./ Modify the Puma robot by transforming Joint 5 into a prismatic joint
@@ -113,53 +133,99 @@ function sessio1
     %        forward kinematics for d1=100, d1=300 and d1=-300.        %
     %------------------------------------------------------------------%
     
-    for i = [100, 300, -300]
-        DH = [  0       0       0       thetaB(1)   % i=1
-                -90     0       0       thetaB(2)   % i=2
-                0       650     190     thetaB(3)   % i=3
-                -90     0       600     thetaB(4)   % i=4
-                90      0       i       0           % i=5
-                -90     0       0       thetaB(6)   % i=6
-            ];
-
-        TT = get_homogeneous_transforms(DH);
-
-        figure,
-
-        plot_joints(TT);
-
-        % We connect the joints with straight lines to simulate the links.
-        simulate_links(TT);    
-
-        title('6 : Show Robot Prismatic');
-        pause;  % a bit, to watch the plot of the configuration shown.
-    end
     
-
+      DH3 = [      0     0     0   thetaB(1)   % i=1
+                 -90     0     0   thetaB(2)   % i=2
+                   0   650   190   thetaB(3)   % i=3
+                 -90     0   600   thetaB(4)   % i=4
+                   0     0     0   thetaB(5)   % i=5
+                 -90     0   100   thetaB(6)   % i=6
+          ];
+           
+      
+      
+      TT3 = get_homogeneous_transforms(DH3);
+      %plot_joints(TT3);
+      simulate_links(TT3);
+      %pause;
+       
+    
+      DH4 = [      0     0     0   thetaB(1)   % i=1
+                 -90     0     0   thetaB(2)   % i=2
+                   0   650   190   thetaB(3)   % i=3
+                 -90     0   600   thetaB(4)   % i=4
+                   0     0     0   thetaB(5)   % i=5
+                 -90     0   300   thetaB(6)   % i=6
+          ];
+           
+      TT4 = get_homogeneous_transforms(DH4);
+      %plot_joints(TT4);
+      simulate_links(TT4); 
+      %pause;
+          
+          
+      DH5 = [     0     0     0   thetaB(1)   % i=1
+                -90     0     0   thetaB(2)   % i=2
+                  0   650   190   thetaB(3)   % i=3
+                -90     0   600   thetaB(4)   % i=4
+                  0     0     0   thetaB(5)   % i=5
+                -90     0  -300   thetaB(6)   % i=6
+             ];
+        
+    
+  
+      TT5 = get_homogeneous_transforms(DH5);
+      %plot_joints(TT5);
+      simulate_links(TT5);
+      %pause;
+      
+      
+      sessio2;
+      
+end
  
+
+%======================%
+% AUXILIARY FUNCTIONS  %
+%======================%
+
+function POS = get_3Dpositions(TT)
+
+    POS.H01 = TT.T01;
+    POS.H02 = POS.H01*TT.T12;
+    POS.H03 = POS.H02*TT.T23;
+    POS.H04 = POS.H03*TT.T34;
+    POS.H05 = POS.H04*TT.T45;
+    POS.H06 = POS.H05*TT.T56;
     
-%end
+end
+
+function nouTheta = pas_radians(theta)
+    
+    for n = 1:6
+        nouTheta(n) = theta(n)*2*pi/360;
+    end
 
 
-
-%================================%
-% AUXILIARY FUNCTIONS SESSION 1  %
-%================================%
+end
 
 
  
 %% here we build up a 3D canvas for plotting stuff
 function plot_canvas
  
-    xlim([-1500 1500]);
-    ylim([-1500 1500]);
-    zlim([-1500 1500]);
-    grid on
-    view([400,400,400])
-    hold on 
     %------------------------------------------------------------------%
     % TO DO: Initialize the axes, their limits and set the view.       %
     %------------------------------------------------------------------%
+    
+    xlim([-1000 1000]);
+    ylim([-1000 1000]);
+    zlim([-1000 1000]);
+    
+    view([1,1,1]);
+    grid on;
+    
+    hold on;
  
 end
  
@@ -167,28 +233,21 @@ end
  
 %% here the forward kinematics
 function TT = get_homogeneous_transforms(DH)
-
+ 
     %------------------------------------------------------------------%
-    % TO DONE: Obtain T(0,6) as composition of the 6 different matrices  %
+    % TO DO: Obtain T(0,6) as composition of the 6 different matrices  %
     %        T(i-1,i). You are expected to obtain each T as a call to  %
     %        function 'tmat', implementing the equation 3.6 in Craig's %
     %        "Introduction to Robotics".                               %                 
     %  HINT: TT may be a structure containing all the T's.             %
     %------------------------------------------------------------------%
- 
-    TT.T01 = tmat(DH(1,1), DH(1,2), DH(1,3), DH(1,4));
-    TT.T12 = tmat(DH(2,1), DH(2,2), DH(2,3), DH(2,4));
-    TT.T23 = tmat(DH(3,1), DH(3,2), DH(3,3), DH(3,4));
-    TT.T34 = tmat(DH(4,1), DH(4,2), DH(4,3), DH(4,4));
-    TT.T45 = tmat(DH(5,1), DH(5,2), DH(5,3), DH(5,4));
-    TT.T56 = tmat(DH(6,1), DH(6,2), DH(6,3), DH(6,4));
- 
-    TT.T02 = TT.T01 * TT.T12; %TT01 * TT12
-    TT.T03 = TT.T02 * TT.T23; %TT01 * TT12 * TT23
-    TT.T04 = TT.T03 * TT.T34; %TT01 * TT12 * TT23 * TT34
-    TT.T05 = TT.T04 * TT.T45; %TT01 * TT12 * TT23 * TT34 * TT45
-    TT.T06 = TT.T05 * TT.T56; %TT01 * TT12 * TT23 * TT34 * TT45 * TT56
-    
+   
+    TT.T01 = tmat(DH(1, 1), DH(1, 2), DH(1, 3), DH(1, 4));
+    TT.T12 = tmat(DH(2, 1), DH(2, 2), DH(2, 3), DH(2, 4));
+    TT.T23 = tmat(DH(3, 1), DH(3, 2), DH(3, 3), DH(3, 4));
+    TT.T34 = tmat(DH(4, 1), DH(4, 2), DH(4, 3), DH(4, 4));
+    TT.T45 = tmat(DH(5, 1), DH(5, 2), DH(5, 3), DH(5, 4));
+    TT.T56 = tmat(DH(6, 1), DH(6, 2), DH(6 ,3), DH(6, 4));
 end
     
  
@@ -196,60 +255,55 @@ end
 %% here the tmat function
 function T = tmat(alpha, a, d, theta)
  
-    % Crea una matriz de transformacion a partir de las configuraciones de
-    % un joint
     %------------------------------------------------------------------%
     % TO DO: Implement here the equation 3.6 in Craig's "Introduction  %
     %         to Robotics".                                            %
     %------------------------------------------------------------------%
-    %theta = deg2rad(theta);
-    %alpha = deg2rad(alpha);
     
-    T=[ cosd(theta)  -sind(theta) 0 a
-        sind(theta)*cosd(alpha)   cosd(theta)*cosd(alpha)   -sind(alpha) -sind(alpha)*d
-        sind(theta)*sind(alpha)   cosd(theta)*sind(alpha)   cosd(alpha)  cosd(alpha)*d
-        0   0   0   1];  
-
+    T = [cos(theta) -sin(theta) 0 a; 
+        sin(theta)*cos(alpha) cos(theta)*cos(alpha) -sin(alpha) -sin(alpha)*d ; 
+        sin(theta)*sin(alpha) cos(theta)*sin(alpha) cos(alpha) cos(alpha);
+        0 0 0 1];
+    
 end
-
+ 
+ 
 
 %% here we plot the joints
 function plot_joints(TT)
  
     %------------------------------------------------------------------%
     % TO DO: Plot the joints in the canvas.                            %   
-    % HINT 1: You can call 'plot_canvas' to rewrite the axes.          %
+    % HINT 1: You can call 'plot_canvas' to rewrite the axes.         %
     % HINT 2: Use the T's to obtain the 3D positions.                  %
     %------------------------------------------------------------------%
- 
+    POS = get_3Dpositions(TT);
     plot_canvas;
-    T = TT.T01;
-    %[T(1,4) T(2,4) T(3,4)]
-    plot3(T(1,4), T(2,4), T(3,4), 'r*');
     
+    points = [POS.H01(1, 4) POS.H01(2, 4) POS.H01(3, 4)
+              POS.H02(1, 4) POS.H02(2, 4) POS.H02(3, 4)
+              POS.H03(1, 4) POS.H03(2, 4) POS.H03(3, 4)
+              POS.H04(1, 4) POS.H04(2, 4) POS.H04(3, 4)
+              POS.H05(1, 4) POS.H05(2, 4) POS.H05(3, 4)
+              POS.H06(1, 4) POS.H06(2, 4) POS.H06(3, 4)];
+
+    plot3(points(:,1),points(:,2),points(:,3), '*');
+    disp(points(1, :));
+    disp(points(2, :));
+    disp(points(3, :));
+    disp(points(4, :));
+    disp(points(5, :));
+    disp(points(6, :));
+    
+    
+    
+
+    grid on;
     hold on;
-    
-    T = T*TT.T12;
-    %[T(1,4) T(2,4) T(3,4)]
-    plot3(T(1,4),T(2,4), T(3,4), 'bo');
-    
-    T = T*TT.T23;
-    %[T(1,4) T(2,4) T(3,4)]
-    plot3(T(1,4), T(2,4), T(3,4), 'g+');
-    
-    T = T*TT.T34;
-    %[T(1,4) T(2,4) T(3,4)]
-    plot3(T(1,4), T(2,4), T(3,4), 'kh');
-    
-    T = T*TT.T45;
-    %[T(1,4) T(2,4) T(3,4)]
-    plot3(T(1,4), T(2,4), T(3,4), 'mx');
-    
-    T = T*TT.T56;
-    %[T(1,4) T(2,4) T(3,4)]
-    plot3(T(1,4), T(2,4), T(3,4), 'cv');
-        
+
 end
+ 
+ 
  
 %% here we plot the links
 function simulate_links(TT)
@@ -258,44 +312,31 @@ function simulate_links(TT)
     % TO DO: Plot the links in the canvas.                             %   
     % HINT 1: You can call 'plot_canvas' to rewrite the axes.          %
     % HINT 2: You can simulate the links by connecting the each pair   % 
-    %         of consecutive joints with a straight line.              %                           
+    %         of consecutive joints with a straight line.              %                           %
     %------------------------------------------------------------------%
+    POS = get_3Dpositions(TT);
+    
+    points = [POS.H01(1, 4) POS.H01(2, 4) POS.H01(3, 4)
+              POS.H02(1, 4) POS.H02(2, 4) POS.H02(3, 4)
+              POS.H03(1, 4) POS.H03(2, 4) POS.H03(3, 4)
+              POS.H04(1, 4) POS.H04(2, 4) POS.H04(3, 4)
+              POS.H05(1, 4) POS.H05(2, 4) POS.H05(3, 4)
+              POS.H06(1, 4) POS.H06(2, 4) POS.H06(3, 4)];
 
-    plot_canvas;
-    Ti = TT.T01;
-    Tf = Ti * TT.T12;
-    plot3([Ti(1,4) Tf(1,4)], [Ti(2,4) Tf(2,4)], [Ti(3,4) Tf(3,4)], 'r');
+    
+    plot3(points(:,1),points(:,2),points(:,3));
+    
+    grid on;
     hold on;
-    Ti = Tf;
-    Tf = Ti * TT.T23;
-    plot3([Ti(1,4) Tf(1,4)], [Ti(2,4) Tf(2,4)], [Ti(3,4) Tf(3,4)], 'b');
     
-    Ti = Tf;
-    Tf = Ti * TT.T34;
-    plot3([Ti(1,4) Tf(1,4)], [Ti(2,4) Tf(2,4)], [Ti(3,4) Tf(3,4)], 'g');
-    
-    Ti = Tf;
-    Tf = Ti * TT.T45;
-    plot3([Ti(1,4) Tf(1,4)], [Ti(2,4) Tf(2,4)], [Ti(3,4) Tf(3,4)], 'k');
-    
-    Ti = Tf;
-    Tf = Ti * TT.T56;
-    plot3([Ti(1,4) Tf(1,4)], [Ti(2,4) Tf(2,4)], [Ti(3,4) Tf(3,4)], 'm');
-
-    hold off;
- 
 end
 
-%/////////////
-%    END SESSION 1
-%/////////////
+%% 
+% ======================================
+% FI CODI SESSIÓ 1
+% ======================================
 
- 
- 
-%////////////////////
-%    sessio2.m
-%////////////////////
-
+function sessio2
 
 %==========================================================================
 % 7./ Call a function named  inverse_kinematics. 
@@ -305,160 +346,161 @@ end
 %
 %--------------------------------------------------------------------------
     
-    % inverse kinematics: dado un punto final donde queremos llegar, se
-    % calcula los movimientos (configuraciones) necesarios para llegar en
-    % cada uno de los joints.
-    
     %------------------------------------------------------------------%
     % TO DO: 7.1.	Obtain the generalized coordinates for the target 
     % position P_target = [-400 300 -100]'. Verify that the obtained angles    
     % correspond with the real target.         
     %------------------------------------------------------------------%
-    close all;
 
-     % (?) 
-    % The initial configuration (configuration shown A)
-    theta_init = [90, -90, -90, 0, 0, 0]';
- 
-    % The DH parameters of PUMA 560
-    DH = [  0     0     0   theta_init(1)   % i=1
+    % (?)
+    
+P_target_sessio2 = [-400 300 -100];
+P_target = [-400 300 -200];
+theta_init = [90, -90, -90, 0, 0, 0];
+    
+theta_init = pas_radians(theta_init);
+
+DH = [      0     0     0   theta_init(1)   % i=1
           -90     0     0   theta_init(2)   % i=2
             0   650   190   theta_init(3)   % i=3
           -90     0   600   theta_init(4)   % i=4
            90     0     0   theta_init(5)   % i=5
           -90     0     0   theta_init(6)   % i=6
           ];
-
-    %P_target = [-400 300 -100]'; Para evitar entrar en la singularidad
-    P_target = [-400 300 -200]';
-    [theta_target] = inverse_kinematics(DH, P_target)
- 
-    % The DH parameters of PUMA 560
-    DH = [  0     0     0   theta_target(1)   % i=1
-          -90     0     0   theta_target(2)   % i=2
-            0   650   190   theta_target(3)   % i=3
-          -90     0   600   theta_target(4)   % i=4
-           90     0     0   theta_target(5)   % i=5
-          -90     0     0   theta_target(6)   % i=6
-          ];
       
-    TT = get_homogeneous_transforms(DH);
-    
-    plot_canvas;
-    
-    plot_joints(TT);
+      %theta_target = array de angles theta resultat del calcul de invers
+      %kinematics
 
-        % We connect the joints with straight lines to simulate the links.
-    simulate_links(TT);
+[theta_target] = inverse_kinematics(DH, P_target );
+
+DH_compr = [      0     0     0   theta_target(1)   % i=1
+                -90     0     0   theta_target(2)   % i=2
+                  0   650   190   theta_target(3)   % i=3
+                -90     0   600   theta_target(4)   % i=4
+                 90     0     0   theta_target(5)   % i=5
+                -90     0     0   theta_target(6)   % i=6
+          ];
+
+TT_comp = get_homogeneous_transforms(DH_compr);
+
+POS_comp = get_3Dpositions(TT_comp);
+
+P_comp = [POS_comp.H06(1, 4) POS_comp.H06(2, 4) POS_comp.H06(3, 4)];
+
+disp(P_target);
+disp(P_comp);
     
-    title('7 : Inverse Kinematics');
+    % (?)
+
     
-    pause;
+    
     
 
-     % (?)
+    
 
-     
-%%
 %==========================================================================
-% 8./ TODO: Plot the values of Px, Py and Pz in the trajectory from P_init = 
-% [500 500 500]? to P_target = [-400 300 -100]' by finding a path in the 
-% configuration space using using:
+% 8./ TODO: Plot the values of Px, Py and Pz in the trajectory from 
+% P_init = [500 500 500]? to P_target = [-400 300 -100]' 
+% by finding a path in the configuration space using using:
 % 	2.1.	Linear interpolation. 
 % 	2.2.	Spline interpolation.
 % HINT: You can use the function ?linespace?
 %--------------------------------------------------------------------------
 
-    function show_robot(P_tar)
-        %close all;
+P_init = [500 500 500];
+P_target = [-400 300 -100];
 
-     % (?) 
-    % The initial configuration (configuration shown A)
-        theta_init = [90, -90, -90, 0, 0, 0]';
- 
-    % The DH parameters of PUMA 560
-        DH = [  0     0     0   theta_init(1)   % i=1
-          -90     0     0   theta_init(2)   % i=2
-            0   650   190   theta_init(3)   % i=3
-          -90     0   600   theta_init(4)   % i=4
-           90     0     0   theta_init(5)   % i=5
-          -90     0     0   theta_init(6)   % i=6
-          ];
+particions = 20;
 
-    %P_target = [-400 300 -100]'; Para evitar entrar en la singularidad
-        %P_target = [-400 300 -200]';
-        P_target = P_tar';
-        [theta_target] = inverse_kinematics(DH, P_target);
- 
-    % The DH parameters of PUMA 560
-        DH = [  0     0     0   theta_target(1)   % i=1
-                -90     0     0   theta_target(2)   % i=2
-                0   650   190   theta_target(3)   % i=3
-          -90     0   600   theta_target(4)   % i=4
-           90     0     0   theta_target(5)   % i=5
-          -90     0     0   theta_target(6)   % i=6
-          ];
-      
-        TT = get_homogeneous_transforms(DH);
+%Interpolació lineal
+
+pos_x = linspace(P_init(1),P_target(1),particions);
+pos_y = linspace(P_init(2),P_target(2),particions);
+pos_z = linspace(P_init(3),P_target(3),particions);
+
+matriu_posicions = [pos_x
+                    pos_y
+                    pos_z];
+
+    hold off;
     
-        %plot_canvas;
-    
-        plot_joints(TT);
-            
-        % We connect the joints with straight lines to simulate the links.
-        simulate_links(TT);
-    
+for iteracio = 1:(particions-1)
+    plot3(matriu_posicions(1, iteracio), matriu_posicions(2, iteracio), matriu_posicions(3, iteracio), '*');
+    grid on;
+    hold on;
+end
+pause;
+
+%Interpolació spline
+
+%Spline interpolation.
+    curva = [0,36,64,81,64,36,0]; %X^2 funcion cuadratica a mano
+    for i=1:length(curva)
+        Ly(i) = Ly(i)+curva(i);
     end
 
-%%
+for i=1:length(Lx)
+        new_P_target = [Lx(i),Ly(i),Lz(i)];
+        [theta_target] = inverse_kinematics(DH, new_P_target)     
+        DH = [  0     0     0   theta_target(1);   % i=1
+              -90     0     0   theta_target(2);   % i=2
+                0   650   190   theta_target(3);   % i=3
+              -90     0   600   theta_target(4);   % i=4
+               90     0     0   theta_target(5);   % i=5
+              -90     0     0   theta_target(6);   % i=6
+              ];
 
-    P_init = [500 500 500];
-    P_target = [-400 300 -200];
-    
-    nelem = 30;
-    
-    %%
-    %LINEAR INTERPOLATION
-    
-    P_vectorX = linspace(P_init(1), P_target(1), nelem);
-    P_vectorY = linspace(P_init(2), P_target(2), nelem);
-    P_vectorZ = linspace(P_init(3), P_target(3), nelem);
 
-    close all;%?????????
-    plot_canvas;%?????????
 
-    for i=1:nelem
-        %figure,
-        %hold on;
-        clf;
-        show_robot([P_vectorX(i) P_vectorY(i) P_vectorZ(i)]);
-        
-        pause (0.05);
-    end
-    title('8 : Lineal');
-    pause;
-    
-    %%
-    %SPLINE INTERPOLATION
-    
-    P_vectorY = interp1([P_init(1) P_vectorX(round(nelem/2)) P_target(1)],[P_init(2) P_vectorY(round(nelem/2))+norm(P_vectorY(round(nelem/2))-P_init(2)) P_target(2)],P_vectorX,'spline');
-    
-    close all;%?????????
-    plot_canvas;%?????????
 
-    for i=1:nelem
-        %figure,
-        %hold on;
-        clf;
-        show_robot([P_vectorX(i) P_vectorY(i) P_vectorZ(i)]);
-        
-        pause (0.05);
-    end
-    title('8 : Spline');
-    pause;
+
+
+%TODO
+
+particions = 20;
+
+pos_x = linspace(P_init(1),P_target(1),particions);
+pos_y = linspace(P_init(2),P_target(2),particions);
+pos_z = linspace(P_init(3),P_target(3),particions);
+
+cs = spline(pos_x, pos_y, pos_z);
+
+sx = spline(cs, pos_x);
+sy = spline(cs, pos_y);
+sz = spline(cs, pos_z);
+
+xx = linspace(0, particions, particions+1);
+
+
+disp xx;
+
+matriu_posicions = [pos_x
+                    pos_y
+                    pos_z];
+
+    hold off;
+xp = ppval(sx,xx);
+yp = ppval(sy,xx);
+zp = ppval(sz,xx);
+
+matriu_posicions = [xp
+                    yp
+                    zp];
     
+for iteracio = 1:(particions-1)
+    plot3(matriu_posicions(1, iteracio), matriu_posicions(2, iteracio), matriu_posicions(3, iteracio), '-*');
+    grid on;
+    hold on;
+end
+pause;
+
+
+
+
+
+
+
     
-%%
 %==========================================================================
 % 9./ TODO: Now Plot the values of theta1, theta2,
 % theta3 , theta4, theta5 and theta6 for 2 types of trayectories from 
@@ -469,143 +511,100 @@ end
 % HINT: You can use the function ?linespace?
 %--------------------------------------------------------------------------
  
-%%
+P_init = [500 500 500];
+P_target = [-400 300 -100];
 
-    P_init = [500 500 500];
-    P_target = [-400 300 -100];
-    
-    nelem = 30;
-    
-    %%
-    %LINEAR INTERPOLATION
-    
-    P_vectorX = linspace(P_init(1), P_target(1), nelem);
-    P_vectorY = linspace(P_init(2), P_target(2), nelem);
-    P_vectorZ = linspace(P_init(3), P_target(3), nelem);
+particions = 20;
 
-    close all;%?????????
-    plot_canvas;%?????????
+%Interpolació lineal
 
-    for i=1:nelem
-        %figure,
-        %hold on;
-        clf;
-        show_robot([P_vectorX(i) P_vectorY(i) P_vectorZ(i)]);
+pos_x = linspace(P_init(1),P_target(1),particions);
+pos_y = linspace(P_init(2),P_target(2),particions);
+pos_z = linspace(P_init(3),P_target(3),particions);
+
+matriu_posicions = [pos_x
+                    pos_y
+                    pos_z];
+
+    hold off;
+    colors = ['g o' 'c o' 'r o' 'y o' 'b o' 'o']
+    
+for iteracio = 1:(particions-1)
+    
+    P_target = [matriu_posicions(1, iteracio), matriu_posicions(2, iteracio), matriu_posicions(3, iteracio)];
+    
+    [theta_target] = inverse_kinematics(DH, P_target );
+    
+    
+    
+    for iteracio2 = 1:6
+        plot(iteracio,theta_target(iteracio2) ,colors(iteracio2));
+        hold on;
         
-        pause (0.05);
     end
-    title('9 : Lineal');
-    pause;
     
-    %%
-    %SPLINE INTERPOLATION
-    
-    P_vectorX = linspace(P_init(1), P_target(1), nelem);
-    P_vectorY = linspace(P_init(2), P_target(2), nelem);
-    P_vectorZ = linspace(P_init(3), P_target(3), nelem);
-    
-    P_vectorY = interp1([P_init(1) P_vectorX(round(nelem/2)) P_target(1)],[P_init(2) P_vectorY(round(nelem/2))+norm(P_vectorY(round(nelem/2))-P_init(2)) P_target(2)],P_vectorX,'spline');
-    
-    close all;%?????????
-    plot_canvas;%?????????
 
-    for i=1:nelem
-        %figure,
-        %hold on;
-        clf;
-        show_robot([P_vectorX(i) P_vectorY(i) P_vectorZ(i)]);
-        
-        pause (0.05);
-    end
-    title('9 : Spline');
-    pause;
+end 
+pause;
 
+
+%Interpolació spline
+%TODO
+
+particions = 20;
+
+pos_x = linspace(P_init(1),P_target(1),particions);
+pos_y = linspace(P_init(2),P_target(2),particions);
+pos_z = linspace(P_init(3),P_target(3),particions);
+
+cs = spline(pos_x, pos_y, pos_z);
+
+sx = spline(cs, pos_x);
+sy = spline(cs, pos_y);
+sz = spline(cs, pos_z);
+
+xx = linspace(0, particions, particions+1);
+
+
+disp xx;
+
+matriu_posicions = [pos_x
+                    pos_y
+                    pos_z];
+
+    hold off;
+xp = ppval(sx,xx);
+yp = ppval(sy,xx);
+zp = ppval(sz,xx);
+
+matriu_posicions = [xp
+                    yp
+                    zp];
     
-%%
+for iteracio = 1:(particions-1)
+    plot3(matriu_posicions(1, iteracio), matriu_posicions(2, iteracio), matriu_posicions(3, iteracio), '- *');
+    grid on;
+    hold on;
+end
+pause;
+
+
+
+
 %==========================================================================
 % 11./ TODO: Complete the TODO 11: Implement the trajectory from from 
 % P_init = [500 500 500]? to P_target = [-400 300 -100]' by using the 
 % incremental motion through the Jacobian.
 %--------------------------------------------------------------------------
 
+J = get_jacobian(TT)  
 
-%%
-
-    %Target and starting points
-    P_init = [500 500 500];
-    P_target = [-400 300 -100];
-    
-    %Amount of steps
-    nelem = 30;
-    
-    %Aux
-    P_vectorX = linspace(P_init(1), P_target(1), nelem);
-    P_vectorY = linspace(P_init(2), P_target(2), nelem);
-    P_vectorZ = linspace(P_init(3), P_target(3), nelem);
-    P = [P_vectorX ; P_vectorY ; P_vectorZ];
-    
-    %Aux values
-    error = 20;
-    step = 10;
-    dif = inf;
-    
-    %Get DeltaX
-    delta_x = (P(:,2) - P(:,1)) * step;
-    delta_x = [delta_x; 0; 0; 0];
-
-    [theta] = inverse_kinematics(DH, P_init);
-    DH = [DH(:,1:3) theta];
-    
-    close all;
-    plot_canvas;
-    while dif > error
-        clf;
-        
-        %Show current robot
-        TT = get_homogeneous_transforms(DH);
-        plot_joints(TT);
-        simulate_links(TT);
-        
-        %Calculate next robot
-        dif = (norm(P_target - TT.T06(1:3,4)'));
-        
-        J = get_jacobian(TT);
-        
-        %J \ delxa_x = inv(J) * delta_x
-        theta_aux = J \ delta_x;
-        theta = theta + theta_aux;
-        
-        DH = [DH(:,1:3) theta];
-        
-        pause(0.01);
-        
-    end
-    title('11 : Jacobian');
-%{
------------
-Com calculem la trajectòria a partir de la matriu jacoviana? De la següent
-manera:
-
-A partir de la jacoviana calculem la jacoviana inversa i la multipliquem
-per delta de x
-
-delta de x serà un vector en la direcció ..
-
-Delta(theta) = J^{-1} · Delta(x)
-
-Delta(theta)_1 = Delta(theta)_0 + Delta(theta)
-
-%}
+% (?)
 
 
-
-
-
-%%
-%===============================%
-% AUXILIARY FUNCTIONS SESSION 2 %
-%===============================%
-
+%======================%
+% AUXILIARY FUNCTIONS  %
+%======================%
 
 function J = get_jacobian(TT)
 
@@ -613,44 +612,20 @@ function J = get_jacobian(TT)
 % 10./ TODO: Implement the function get_jacobian, which returns
 % the Jacobian of the system using the homogeneous transforms as input.
 %--------------------------------------------------------------------------
-%{    
-   JACOVIANA
+
+    % (?) Matriu jacobiana 6x6. Jv velocitats lineals, JV velocitats
+    % angulars. Ambdos de tamany 3x1. Jvi = zi x (E-Pi)
+    %                                             ^ 4 columna DH (6,0)
     
-    tots els vectors respecte de la base
-    matriu jacoviana 6*6
-    S_v son vectors 3*1
-    S_w son vectors 3*1
     
-    Jv(i) = Zi x (E-Pi)   x=cross
     
-    Jv1 cross(
+
     
-    E = 4a columna de la matriu T06
-    Pi = posició del frame i = 4a col de la matriu TT.Ti0
-    punt origen referència 1 : 000
+    
+    
 
 
-%}
-    Jv = zeros(3,6);
-    Jw = zeros(3,6);
-    
-    end_eff = TT.T06(1:3,4); %coordenadas del end effector (tool)
-    
-    z = [TT.T01(1:3,3), TT.T02( 1:3,3), TT.T03(1:3,3), TT.T04(1:3,3), TT.T05(1:3,3), TT.T06(1:3,3)];
-    
-    org_coord = [TT.T01(1:3,4), TT.T02(1:3,4), TT.T03(1:3,4), TT.T04(1:3,4), TT.T05(1:3,4), TT.T06(1:3,4)];
-    
-    for k = 1:6 
-        Jv(:, k) = cross(z(:, k), end_eff - org_coord(:, k))'; 
-        Jw(:, k) = z(:, k);
-    end
- 
-    J = vertcat(Jv, Jw);
-    
 end
-
-
-
 
 %% 
 %
@@ -779,8 +754,6 @@ end
                 theta3 = theta3*180/pi;
                 theta4 = theta4*180/pi;
                 theta5 = theta5*180/pi;
-      
-                
                 theta6 = theta6*180/pi;
                 if theta2>=160 && theta2<=180
                     theta2 = -theta2;
@@ -791,8 +764,6 @@ end
                     theta3 = theta3+180;
                     break
                 end
-                nogo = 1; %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         
                 if i == 4 && nogo == 0
                     h = errordlg('Point unreachable due to joint angle constraints.','JOINT ERROR');
                     waitfor(h);
@@ -806,17 +777,6 @@ end
         
         theta_target = [theta1,theta2,theta3+180,theta4,theta5,theta6]';
     end
-
-%/////////////
-%    END SESSION 2
-%/////////////
-
-    end
-    
-    
-
-
-    
-    
+end
 
 

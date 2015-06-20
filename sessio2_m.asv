@@ -53,34 +53,55 @@ function sessio2
     pos_y = linspace(P_init(2),P_target(2),frames);
     pos_z = linspace(P_init(3),P_target(3),frames);
 
-    
     for i=1:frames
         clf;
         mostra_Robot([pos_x(i) pos_y(i) pos_z(i)]);
+        
         pause(0.3);
+        title('8_1: Interpola');
     end
-    title('8_1: Interpolació lineal');
     
     hold off;
     pause;
-    
-    %==========================================================================
-    
-    %Interpolació spline 
-    pos_y = interp1([P_init(1) pos_x(round(frames/2)) P_target(1)],[P_init(2) pos_y(round(frames/2))+norm(pos_y(round(frames/2))-P_init(2)) P_target(2)],pos_x,'spline');
 
-    close all;
+    %Interpolació spline
+
+    [theta_target] = inverse_kinematics(DH, P_target); 
+    [theta_init] = inverse_kinematics(DH, P_init); 
+
+    %Hacemos todos los incrementos de la theta_init a la theta_target
+    auxt =  linspace(1,frames,frames);
+
+    theta_1 = interp1([auxt(1) auxt(uint8(frames/2)) auxt(frames)],[theta_1(1) theta_1(uint8(frames/2))+norm(theta_1(uint8(frames/2))-theta_1(frames)) theta_1(frames)],auxt,'spline');
+    theta_2 = interp1([auxt(1) auxt(uint8(frames/2)) auxt(frames)],[theta_2(1) theta_2(uint8(frames/2))+norm(theta_2(uint8(frames/2))-theta_2(frames)) theta_2(frames)],auxt,'spline');
+    theta_3 = interp1([auxt(1) auxt(uint8(frames/2)) auxt(frames)],[theta_3(1) theta_3(uint8(frames/2))+norm(theta_3(uint8(frames/2))-theta_3(frames)) theta_3(frames)],auxt,'spline');
+    theta_4 = interp1([auxt(1) auxt(uint8(frames/2)) auxt(frames)],[theta_4(1) theta_4(uint8(frames/2))+norm(theta_4(uint8(frames/2))-theta_4(frames)) theta_4(frames)],auxt,'spline');
+    theta_5 = interp1([auxt(1) auxt(uint8(frames/2)) auxt(frames)],[theta_5(1) theta_5(uint8(frames/2))+norm(theta_5(uint8(frames/2))-theta_5(frames)) theta_5(frames)],auxt,'spline');
+    theta_6 = interp1([auxt(1) auxt(uint8(frames/2)) auxt(frames)],[theta_6(1) theta_6(uint8(frames/2))+norm(theta_6(uint8(frames/2))-theta_6(frames)) theta_6(frames)],auxt,'spline');
+    theta = [theta_1 ; theta_2 ; theta_3 ; theta_4 ; theta_5 ; theta_6];
+
     
-    %Visualitzem
+    hold on;
+    
+
     for i=1:frames
+        DH = [DH(:,1:3) theta(:,i)];
+        TT = get_homogeneous_transforms(DH);
         clf;
-        mostra_Robot([pos_x(i) pos_y(i) pos_z(i)]);
+        plot_canvas;
+        plot_joints(TT);
+        simulate_links(TT); 
         pause(0.3);
-        title('8_1: Interpolació spline');
     end
 
     hold off;
     pause;
+
+
+
+
+
+
 
     %==========================================================================
     % 9./ TODO: Now Plot the values of theta1, theta2,
@@ -410,8 +431,6 @@ end
                 theta3 = theta3*180/pi;
                 theta4 = theta4*180/pi;
                 theta5 = theta5*180/pi;
-      
-                
                 theta6 = theta6*180/pi;
                 if theta2>=160 && theta2<=180
                     theta2 = -theta2;
@@ -422,8 +441,6 @@ end
                     theta3 = theta3+180;
                     break
                 end
-                nogo = 1; %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         
                 if i == 4 && nogo == 0
                     h = errordlg('Point unreachable due to joint angle constraints.','JOINT ERROR');
                     waitfor(h);
