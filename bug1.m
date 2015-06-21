@@ -127,11 +127,6 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
             dist_to_start = sqrt((starting_pos(2) - position(2))^2 + (starting_pos(1) - position(1))^2);
             
             if ((flag_entrada == 1) && (dist_to_start < sensor_range/2) && (flag_sortida == 0))
-                if (turn_distance > pi())
-                    turn_distance = turn_distance-pi();
-                else
-                    turn_distance = turn_distance+pi();
-                end
                 flag_sortida = 1;
             end
             

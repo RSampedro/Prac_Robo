@@ -71,14 +71,24 @@ for i=1:length(X(:,1))
                 [minD,minPt, d, pt, ind] = minDistToEdges(pos, curpoly);
                 if (minD < r0)
                     V(i,j) = V(i,j) + 1/2*Krep*(1/minD-1/r0)^2;
+                    % Original
                     gV(:,i,j) = gV(:,i,j) + Krep*(-1/minD+1/r0)*(pos'-minPt')/minD^(3);
+                    % Sin
+                    gV(:,i,j) = gV(:,i,j) + Krep*sin(-1/minD+1/r0)*(pos'-minPt')/minD^(3);
+                    % Log
+                    %gV(:,i,j) = gV(:,i,j) + Krep*log(-1/minD+1/r0)*(pos'-minPt')/minD^(3);
                 end
                 % Add potential of distance to center, to avoid getting
                 % stuck on flat walls
                 centD = norm(pos-obsCentroid(m,:));
                 if (centD < rc0)
                     V(i,j) =  V(i,j) + 1/2*Krep*(1/centD-1/rc0)^2;
-                    gV(:,i,j) = gV(:,i,j) + Krep*(-1/centD+1/rc0)*(pos'-obsCentroid(m,:)')/centD^(3);
+                    % Original
+                    %gV(:,i,j) = gV(:,i,j) + Krep*(-1/centD+1/rc0)*(pos'-obsCentroid(m,:)')/centD^(3);
+                    % Sin
+                    gV(:,i,j) = gV(:,i,j) + Krep*sin(-1/centD+1/rc0)*(pos'-obsCentroid(m,:)')/centD^(3);
+                    % Log
+                    %gV(:,i,j) = gV(:,i,j) + Krep*log(-1/centD+1/rc0)*(pos'-obsCentroid(m,:)')/centD^(3);
                 end
             end
         end
