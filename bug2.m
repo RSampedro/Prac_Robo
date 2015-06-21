@@ -26,9 +26,10 @@ posMaxBound = [15 15];
 
 [aObsts, bObsts, world_rectangles] = polygonal_world(posMinBound, posMaxBound, minLen, maxLen, numObsts, startPos, endPos, obstBuffer, maxCount);
 world_rectangles = [    1 6     3 12     9 6       5 2     7 2     ;
-                        1 14    3 14     9 14      5 10    7 4     ;
+                        3 6    3 14     9 14      5 10    7 4     ;
                         3 14    9 14     11 14     7 10    13 4    ;
-                        3 6     9 12     11 6      7 2     13 2    ;];
+                        1 14     9 12     11 6      7 2     13 2    ;];
+                    
 
 bug2_exec(startPos, endPos);
 
@@ -152,12 +153,14 @@ function dis = read_sensor(angle, current_point)
     global sensor_range;
     global numObsts;
     
+    precision = 20;
+    
     dis = inf;
     k = 1;
     
     next_point = pointFromAlpha(current_point, angle, sensor_range);
-    point_vector(1,:) = linspace(current_point(1), next_point(1), 10);
-    point_vector(2,:) = linspace(current_point(2), next_point(2), 10);
+    point_vector(1,:) = linspace(current_point(1), next_point(1), precision);
+    point_vector(2,:) = linspace(current_point(2), next_point(2), precision);
     
     while (k < numObsts*2)
         

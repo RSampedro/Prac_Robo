@@ -5,8 +5,8 @@ sensor_range = 1;
 
 global world_rectangles;
 
-startPos= [2 2];
-endPos = [13 13];
+startPos= [2 3];
+endPos = [12 14];
 
 
 minLen.a = 1;
@@ -26,16 +26,10 @@ posMaxBound = [15 15];
 
 [aObsts, bObsts, world_rectangles] = polygonal_world(posMinBound, posMaxBound, minLen, maxLen, numObsts, startPos, endPos, obstBuffer, maxCount);
 
-%world_rectangles = [    4 4     4 4     4 10   ;
-%                        7 4     6 4     10 10  ;
-%                        7 6     6 10    4 12   ;
-%                        4 6     6 10    12 10  ;
-%    ];
-
-world_rectangles = [    1 6     3 12     9 6       7 2     13 2        ;
-                        1 14    3 14     9 14      7 4     13 10       ;
-                        3 14    9 14     11 14     13 4    15 10       ;
-                        3 6     9 12     11 6      13 2    15 2        ;];
+world_rectangles = [    1 6     3 12     9 6          7 2     13 2        ;
+                        3 6    3 14     9 14          7 4     13 10       ;
+                        3 14    9 14     11 14       13 4    15 10       ;
+                        1 14     9 12     11 6        13 2    15 2        ;];
 
 
 
@@ -101,6 +95,7 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
             if flag == 1
                 starting_pos = [position(1), position(2)];
                 best_pos = [0,0];
+                flag = 0;
             end
             sens_dist = [];
             num_compr = 90;
@@ -195,12 +190,14 @@ function dis = read_sensor(angle, current_point)
     global sensor_range;
     global numObsts;
     
+    precision = 20;
+    
     dis = inf;
     k = 1;
     
     next_point = pointFromAlpha(current_point, angle, sensor_range);
-    point_vector(1,:) = linspace(current_point(1), next_point(1), 10);
-    point_vector(2,:) = linspace(current_point(2), next_point(2), 10);
+    point_vector(1,:) = linspace(current_point(1), next_point(1), precision);
+    point_vector(2,:) = linspace(current_point(2), next_point(2), precision);
     
     while (k < numObsts*2)
         
