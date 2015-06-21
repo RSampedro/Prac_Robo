@@ -76,8 +76,7 @@ for i=1:n
 end
 [cost path] = dijkstra(A,D,n-1,n);
 for i=1:numOPts
-    ordenada(i,:) = allGraphPts(path(i), :);
+    ordenada = AllGraph
 end
-plot(ordenada(:,1), ordenada(:,2),'-r','LineWidth',2);
 toc;
 
