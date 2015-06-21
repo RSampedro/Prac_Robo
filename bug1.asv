@@ -32,10 +32,11 @@ posMaxBound = [15 15];
 %                        4 6     6 10    12 10  ;
 %    ];
 
-world_rectangles = [    1 6     3 12     9 6       7 2     13 2        ;
-                        1 14    3 14     9 14      7 4     13 10       ;
-                        3 14    9 14     11 14     13 4    15 10       ;
-                        3 6     9 12     11 6      13 2    15 2        ;];
+world_rectangles = [    6 1     14 3     14 9       2 5     2 7      2 13                   ;
+                        6 3     12 3     14 11      10 5    4 7      10 13           ;
+                        14 1    14 9     6 1        2 7     2 13     2 15       ;
+                        14 3    12 9     6 3        10 7    4 13     10 15        ;
+    ];
 
 
 
@@ -103,7 +104,7 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
                 best_pos = [0,0];
             end
             sens_dist = [];
-            num_compr = 90;
+            num_compr = 45;
             chk_angles = linspace(0, 2*pi(), num_compr);
             
             for i = 1:num_compr
@@ -164,7 +165,7 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
             end
             flag = 0;
         end
-    %clf;
+    clf;
     hold on;
     plot(position(1),position(2),'*')
     plotEnvironment(world_rectangles,posMinBound, posMaxBound, qstart, qgoal)

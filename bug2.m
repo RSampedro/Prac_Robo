@@ -18,13 +18,18 @@ obstBuffer = 1;
 maxCount = 10000;
 
 global numObsts;    
-numObsts = 3;
+numObsts = 5;
 global posMinBound;
 posMinBound = [0 0];
 global posMaxBound;
 posMaxBound = [15 15];
 
 [aObsts, bObsts, world_rectangles] = polygonal_world(posMinBound, posMaxBound, minLen, maxLen, numObsts, startPos, endPos, obstBuffer, maxCount);
+world_rectangles = [    1 6     3 12     9 6       5 2     7 2     ;
+                        1 14    3 14     9 14      5 10    7 4     ;
+                        3 14    9 14     11 14     7 10    13 4    ;
+                        3 6     9 12     11 6      7 2     13 2    ;];
+
 bug2_exec(startPos, endPos);
 
 
@@ -75,7 +80,7 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
 
         elseif (mode == 1)
             sens_dist = [];
-            num_compr = 45;
+            num_compr = 90;
             chk_angles = linspace(0, 2*pi(), num_compr);
             
             for i = 1:num_compr
@@ -117,7 +122,7 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
                 end
             end
         end
-    clf;
+    %clf;
     hold on;
     plot(position(1),position(2),'*')
     plotEnvironment(world_rectangles,posMinBound, posMaxBound, qstart, qgoal)
@@ -126,8 +131,6 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
     pause(0.01);
         
     hold off;
-        %Mostramos la distancia restante al goal por pantalla
-        %newdist_to_goal = sqrt((goal(2) - posicion(2))^2 + (goal(1) - posicion(1))^2)
     end
     toc
 end
@@ -529,7 +532,7 @@ plot(startPos(1),startPos(2),'b*')
 plot(endPos(1),endPos(2),'g*')
 patch([posMinBound(1) posMaxBound(1) posMaxBound(1) posMinBound(1)],[posMinBound(2) posMinBound(2) posMaxBound(2) posMaxBound(2)],...
     [1 0 0],'FaceColor','none','LineStyle','-','EdgeColor',[0 1 1])
-hold off
+%hold off
 axis equal
 axis([posMinBound(1) posMaxBound(1) posMinBound(2) posMaxBound(2)]);
 end

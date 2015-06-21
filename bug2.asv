@@ -1,43 +1,34 @@
-function bug1
+function bug2
 
 global sensor_range;
 sensor_range = 1;
 
 global world_rectangles;
 
-startPos= [2 2];
-endPos = [13 13];
+startPos= [2 3];
+endPos = [12 14];
 
 
 minLen.a = 1;
-maxLen.a = 6;
+maxLen.a = 4;
 minLen.b = 1;
-maxLen.b = 5;
+maxLen.b = 4;
 
 obstBuffer = 1;
 maxCount = 10000;
 
 global numObsts;    
-numObsts = 3;
+numObsts = 5;
 global posMinBound;
 posMinBound = [0 0];
 global posMaxBound;
 posMaxBound = [15 15];
 
 [aObsts, bObsts, world_rectangles] = polygonal_world(posMinBound, posMaxBound, minLen, maxLen, numObsts, startPos, endPos, obstBuffer, maxCount);
-
-%world_rectangles = [    4 4     4 4     4 10   ;
-%                        7 4     6 4     10 10  ;
-%                        7 6     6 10    4 12   ;
-%                        4 6     6 10    12 10  ;
-%    ];
-
-world_rectangles = [    1 6     3 12     9 6       7 2     13 2        ;
-                        1 14    3 14     9 14      7 4     13 10       ;
-                        3 14    9 14     11 14     13 4    15 10       ;
-                        3 6     9 12     11 6      13 2    15 2        ;];
-
-
+world_rectangles = [    1 6     3 12     9 6       5 2     7 2       ;
+                        1 14    3 14     9 14      5 10    7 4     13 10       ;
+                        3 14    9 14     11 14     7 10    13 4    14 10       ;
+                        3 6     9 12     11 6      7 2     13 2    14 2        ;];
 
 bug2_exec(startPos, endPos);
 
@@ -67,19 +58,13 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
     line_ang = normalize_ang(line_ang);
     
     mode = 0;
-    starting_pos = [999,999];
-    best_pos = [999, 999];
-    best_dist = 999;
-    flag = 0;
-    flag_entrada = 0;
-    flag_sortida = 0;
     
+    tic
     while(  position(1) > qgoal(1) + robot_size*0.5||...
             position(1) < qgoal(1) - robot_size*0.5||...
             position(2) > qgoal(2) + robot_size*0.5||...
             position(2) < qgoal(2) - robot_size*0.5    )
         if (mode == 0)
-            turn_distance = pi()/20.0 ;
             angle = atan2((qgoal(2) - position(2)), (qgoal(1) - position(1)));
             position(1) = position(1) + cos(angle)*robot_step;
             position(2) = position(2) + sin(angle)*robot_step;
@@ -91,17 +76,9 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
             if (min_dist < robot_size)
                 dist_goal = sqrt((qgoal(2) - position(2))^2 + (qgoal(1) - position(1))^2);
                 mode = 1;
-                flag = 1;
-                flag_entrada = 0;
-                flag_sortida = 0;
-
             end
 
         elseif (mode == 1)
-            if flag == 1
-                starting_pos = [position(1), position(2)];
-                best_pos = [0,0];
-            end
             sens_dist = [];
             num_compr = 90;
             chk_angles = linspace(0, 2*pi(), num_compr);
@@ -118,7 +95,7 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
             angle = normalize_ang(angle);
             
             if (min_d < robot_size)
-               angle = angle - turn_distance;
+                angle = angle - turn_distance;
             elseif (min_d > 2*robot_size)
                 angle = angle + turn_distance;
             end
@@ -132,39 +109,20 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
             angle = atan2((qgoal(2) - position(2)), (qgoal(1) - position(1)));
             angle = normalize_ang(angle);
             
-            temp = sqrt((qgoal(2) - position(2))^2 + (qgoal(1) - position(1))^2);
-            if (temp < best_dist)
-               best_pos = position;
-               best_dist = temp;
-            end
-            
-            dist_to_start = sqrt((starting_pos(2) - position(2))^2 + (starting_pos(1) - position(1))^2);
-            
-            if ((flag_entrada == 1) && (dist_to_start < sensor_range/2) && (flag_sortida == 0))
-                flag_sortida = 1;
-            end
-            
             if(abs(angle - line_ang) < pi()/180 || ...
                     abs(line_ang - pi()) < pi()/180 || ...
                     abs(angle - line_ang + pi()) < pi()/180)
                 next_obs = read_sensor(angle, position);
                 if (next_obs > robot_size)
-                    flag_entrada = 1;
+                    newdist_to_goal = sqrt((qgoal(2) - position(2))^2 + (qgoal(1) - position(1))^2);
+                    if (newdist_to_goal < dist_goal)
+                        dist_goal = newdist_to_goal;
+                        mode = 0;
+                    end
                 end
             end
-            
-            
-            if (flag_sortida == 1)
-                temp = sqrt((best_pos(2) - position(2))^2 + (best_pos(1) - position(1))^2);
-                if (temp < sensor_range/2)
-                    mode = 0;
-                    flag_entrada = 0;
-                    flag_sortida = 0;
-                end
-            end
-            flag = 0;
         end
-    %clf;
+    clf;
     hold on;
     plot(position(1),position(2),'*')
     plotEnvironment(world_rectangles,posMinBound, posMaxBound, qstart, qgoal)
@@ -173,9 +131,8 @@ function [x_points, y_points] = bug2_exec(qstart, qgoal)
     pause(0.01);
         
     hold off;
-        %Mostramos la distancia restante al goal por pantalla
-        %newdist_to_goal = sqrt((goal(2) - posicion(2))^2 + (goal(1) - posicion(1))^2)
     end
+    toc
 end
 
 
@@ -283,7 +240,6 @@ function draw_car(scale, x, y, h)
     plot(point(:,1), point(:,2), 'r');
     axis equal
 end
-
 
 function [a,b,ptsStore] = polygonal_world(posMinBound, posMaxBound, minLen, maxLen, numObsts, startPos, endPos, obst_buffer, max_count)
 
@@ -569,7 +525,6 @@ end
 function plotEnvironment(ptsStore,posMinBound, posMaxBound, startPos, endPos)
 
 hold on
-grid on
 for i = 1:2:size(ptsStore,2)
     patch(ptsStore(:,i),ptsStore(:,i+1),[1 0 0],'linestyle','-','FaceColor',[1 0 0],'EdgeColor',[1 0 0], 'LineWidth',2)
 end
